@@ -1,0 +1,121 @@
+
+call("java.lang.System.gc");
+
+    dir = getDirectory("Choose a Directory ");
+	list = getFileList(dir);
+	if (list.length > 0) {
+
+    for (i=0; i<list.length; i++) {
+
+        showProgress(i, list.length+1);
+        path = dir+list[i];
+        if (!endsWith(path,"/")) open(path);
+        if (nImages>=1) {
+
+		window_originalImage = getInfo("image.filename");
+		title=getTitle();
+
+		run("RGB to Luminance");
+		window_luminanceImage = "luminance of " + title;
+
+		selectWindow(window_luminanceImage); 
+		run("Subtract Background...", "rolling=75 light");
+		run("Median...", "radius=9");
+		run("8-bit");
+		setAutoThreshold("Default");
+		//run("Threshold...");
+		setThreshold(0, 247);
+
+		run("Analyze Particles...", "size=1000000-Infinity circularity=0.00-1.00 show=[Overlay Outlines] display include summarize in_situ");
+		run("To ROI Manager");
+
+		selectWindow(window_originalImage);
+		run("From ROI Manager");
+		roiManager("Set Color", "blue");
+		roiManager("Set Line Width", 1);
+		roiManager("Show All without labels");
+
+		run("Flatten");
+		window_flatImage = getTitle();
+		selectWindow(window_flatImage);
+		saveAs("tiff", path);
+		selectWindow(window_luminanceImage); 
+		run("Close");
+		selectWindow(window_originalImage);
+		run("Close");
+
+		open( path );
+		selectWindow(window_originalImage);
+		filetitle=getTitle();
+		run("Split Channels");
+		channelRed = filetitle + " (red)";
+		channelGreen = filetitle + " (green)";
+		channelBlue = filetitle + " (blue)";
+
+		run("Calculator Plus", "i1=[" +channelRed+ "] i2=[" +channelGreen+ "] operation=[Add: i2 = (i1+i2) x k1 + k2] k1=0.3 k2=0 create");
+
+		imageCalculator("Subtract create", channelBlue,"Result");
+
+		selectWindow("Result");
+		close();
+		selectWindow(channelGreen);
+		close();
+		selectWindow(channelBlue);
+		close();
+		selectWindow(channelRed);
+		close();
+
+		selectWindow("Result of " + channelBlue);
+		setAutoThreshold("Default");
+		//run("Threshold...");
+		setThreshold(0, 50);
+		run("Analyze Particles...", "size=70-Infinity pixel circularity=0.00-1.00 show=[Overlay Outlines] display exclude summarize in_situ");
+		selectWindow("Summary");
+		saveAs("Text", dir + window_originalImage +"_resultats.xls");
+
+		if (nResults() > 1) {
+			run("To ROI Manager");
+			roiManager("Show All without labels");
+
+			selectWindow("Result of " + channelBlue);
+			run("Close");
+
+			open( path );
+			selectWindow(window_originalImage);
+
+			run("From ROI Manager");
+			roiManager("Set Color", "red");
+			roiManager("Set Line Width", 1);
+			roiManager("Show All without labels");
+
+			run("Flatten");
+			window_flatImagenew = getTitle();
+			selectWindow(window_flatImagenew);
+			saveAs("tiff", path);
+			selectWindow(window_originalImage);
+			run("Close");
+			selectWindow(window_flatImage);
+			run("Close");
+
+
+			selectWindow("Results");
+			run("Close");
+			selectWindow(window_originalImage +"_resultats.xls");
+			run("Close");
+			selectWindow("ROI Manager");
+			run("Close");
+
+
+		}
+		else {selectWindow("Result of " + channelBlue);
+			run("Close");
+			selectWindow(window_originalImage +"_resultats.xls");
+			run("Close");
+
+		}
+            
+		close();
+        }
+    }
+}
+
