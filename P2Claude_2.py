@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun 14 11:16:07 2023
-
+Màster en Bioinformàtica i Bioestadística
 @author: juliasanabriafranquesa
-
+2023
 
 """
 
