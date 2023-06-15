@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun 14 10:54:57 2023
-
+Màster en Bioinformàtica i Bioestadística
 @author: juliasanabriafranquesa
+2023
 """
 
 import os
