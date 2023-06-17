@@ -1,0 +1,73 @@
+---
+title: "TFM. Comparació dades"
+author: "Júlia Sanabria Franquesa"
+output: html_document
+---
+
+
+```{r}
+summary(dades[,c("Obs1_E1", "Obs2_E1","Obs3_E1","Obs4_E2")])
+```
+
+
+
+```{r}
+library(irr)
+icc(dades[,2:4], model = "twoway", type = "agreement", unit = "single")
+```
+
+
+
+```{r}
+library(psych)
+ICC(dades[,2:3])
+```
+
+
+
+```{r}
+# Canviar els noms de les columnes en un paquet de dades existent
+colnames(dades) <- c("Punch", "Obs1_E1", "Obs2_E1", "Obs3_E1", "Obs4_E2")
+
+Observadora1 = dades$Obs1_E1
+Observadora2 = dades$Obs2_E1
+Observadora3 = dades$Obs3_E1
+Observadora4 = dades$Obs4_E2
+```
+
+
+
+```{r}
+# Carregar el paquet "car"
+library(car)
+
+# Crear un scatterplot entre Observadora1 i Observadora4
+scatterplot(Observadora4 ~ Observadora1, data = dades,
+            xlab = "Observadora 1", ylab = "Observadora 4",
+            main = "Scatterplot entre Observadora 1 i Observadora 4",
+            smooth=FALSE)
+
+```
+
+
+
+```{r}
+# Crear un boxplot per a les observadores
+boxplot(dades[, -1], names = c("Observadora 1", "Observadora 2", "Observadora 3", "Observadora 4"),
+        main = "Comparació de valors entre observadores", ylab = "Valors", col = "lightblue")
+```
+
+
+
+```{r}
+# Crear un scatterplot de les observacions
+plot(Observadora1, Observadora2, xlim = range(dades[, -1]), ylim = range(dades[, -1]),
+     xlab = "Observadora 1", ylab = "Observadora 2", main = "Scatterplot entre les 4 observadores")
+
+points(Observadora1, Observadora3, col = "darkgreen")
+points(Observadora1, Observadora4, col = "blue")
+legend("topright", legend = c("Observadora2", "Observadora3", "Observadora4"), col = c("darkgreen", "red", "blue"), pch = 1)
+
+```
+
+
