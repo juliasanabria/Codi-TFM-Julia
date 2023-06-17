@@ -1,0 +1,50 @@
+//Obtenir el nom del fitxer d'entrada
+input_file = "/Users/juliasanabriafranquesa/Desktop/UOC/Q4/Q4TFM/ImatgesOriginals_Proves/A (1).tif";
+
+//Carregar la imatge i convertir-la a escala de grisos
+open(input_file);
+run("RGB to Luminance");
+
+//Restar el fons
+run("Subtract Background...", "rolling=75 light");
+
+//Realitzar una mediana per reduir el soroll
+run("Median...", "radius=9");
+
+//Convertir a imatge de 8 bits
+run("8-bit");
+
+//Segmentar els nuclis positius per FOXP3
+setAutoThreshold("Default dark");
+setThreshold(0, 247);
+run("Analyze Particles...", "size=1000000-Infinity show=Overlay display exclude include summarize in_situ");
+run("To ROI Manager");
+
+//Canviar el color i gruix de les regions d'interès dels nuclis positius per FOXP3
+roiManager("Show All without labels");
+roiManager("Set Color", "blue");
+roiManager("Set Line Width", 3);
+
+//Guardar la imatge i les regions d'interès dels nuclis positius per FOXP3 en un fitxer TIFF
+run("Flatten");
+saveAs("Tiff", "/Users/juliasanabriafranquesa/Desktop/UOC/Q4/Q4TFM/Resultats Julia/P3Sage/A (1).tif");
+
+
+//Segmentar els nuclis negatius per CD8
+run("Split Channels");
+selectWindow("A (1).tif (blue)");
+run("Calculator Plus", "i1=[A (1).tif (red)] i2=[A (1).tif (green)] operation=[Add: i2 = (i1+i2) x k1 + k2] k1=0.3 k2=0 create");
+imageCalculator("Subtract create", "A (1).tif (blue)","Result");
+setAutoThreshold("Default dark");
+setThreshold(0, 50);
+run("Analyze Particles...", "size=70-Infinity show=Overlay display exclude summarize in_situ");
+
+//Canviar el color i gruix de les regions d'interès dels nuclis negatius per CD8
+roiManager("Show All without labels");
+roiManager("Set Color", "red");
+roiManager("Set Line Width", 3);
+
+//Guardar la imatge i les regions d'interès dels nuclis negatius per CD8 en un fitxer TIFF
+run("Flatten");
+saveAs("Tiff", "/Users/juliasanabriafranquesa/Desktop/UOC/Q4/Q4TFM/Resultats Julia/P3Sage/A (1).tif");
+
