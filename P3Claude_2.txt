@@ -1,0 +1,32 @@
+// Obre la imatge original
+open("/Users/juliasanabriafranquesa/Desktop/UOC/Q4/Q4TFM/ImatgesOriginals_Proves/A (1).tif");
+
+// Millora preprocessat   
+run("RGB to Luminance");
+run("Subtract Background...", "rolling=30 light");     
+run("Median...", "radius=3");
+
+// Millora llindarització
+setAutoThreshold("Otsu");
+setOption("BlackBackground", false);  
+run("Threshold...");
+
+// Analitza partícules amb paràmetres millors         
+run("Analyze Particles...", "size=150-Infinity pixel circularity=0.25-1.00 show=Overlay display include summarize in_situ");
+
+// Guarda resultats   
+saveAs("Results", "/Users/juliasanabriafranquesa/Desktop/UOC/Q4/Q4TFM/Resultats Julia/P3Claude/Summary " + getTitle() + ".xls");
+
+// Mostra els ROIs al ROI Manager
+run("To ROI Manager");
+
+// Etiqueta nuclis marrons de color vermell
+roiManager("Show All without labels");
+roiManager("Set Color", "red");
+roiManager("Set Line Width", 3);    
+
+// Aplica els ROIs a la imatge original  
+run("From ROI Manager");   
+
+// Guarda la imatge etiquetada
+saveAs("Tiff", "/Users/juliasanabriafranquesa/Desktop/UOC/Q4/Q4TFM/Resultats Julia/P3Claude/" + getTitle());
