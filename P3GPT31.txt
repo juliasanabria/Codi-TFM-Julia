@@ -1,0 +1,105 @@
+// Carrega la imatge
+open("/Users/juliasanabriafranquesa/Desktop/UOC/Q4/Q4TFM/ImatgesOriginals_Proves/A (1).tif");
+
+// Convertir a escala de grisos
+run("RGB to Luminance");
+
+// Restar el fons
+run("Subtract Background...", "rolling=75 light");
+
+// Suavitzar la imatge
+run("Median...", "radius=9");
+
+// Convertir a imatge de 8 bits
+run("8-bit");
+
+// Threshold automàtic
+setAutoThreshold("Default dark");
+
+// Aplicar el threshold
+setThreshold(0, 247);
+
+// Analitzar partícules
+run("Analyze Particles...", "size=1000000-Infinity show=Overlay display exclude include summarize in_situ");
+
+// Guardar les regions d'interès a la gestió de regions d'interès (ROI Manager)
+run("To ROI Manager");
+
+// Mostrar la imatge original amb les regions d'interès
+selectWindow("A (1).tif");
+roiManager("Show All without labels");
+roiManager("Set Color", "blue");
+roiManager("Set Line Width", 3);
+
+// Aplanar la imatge amb les regions d'interès superposades
+run("Flatten");
+
+// Guardar la imatge amb les regions d'interès superposades
+saveAs("Tiff", "/Users/juliasanabriafranquesa/Desktop/UOC/Q4/Q4TFM/ImatgesOriginals_Proves/A (1).tif");
+
+// Tancar finestres
+close();
+close();
+
+// Tancar la finestra de la imatge de luminància
+selectWindow("luminance of A (1).tif");
+close();
+
+// Carregar la imatge original
+open("/Users/juliasanabriafranquesa/Desktop/UOC/Q4/Q4TFM/ImatgesOriginals_Proves/A (1).tif");
+
+// Separar els canals de color
+run("Split Channels");
+
+// Crear una nova imatge sumant el canal vermell i el canal verd
+selectWindow("A (1).tif (blue)");
+run("Calculator Plus", "i1=[A (1).tif (red)] i2=[A (1).tif (green)] operation=[Add: i2 = (i1+i2) x k1 + k2] k1=0.3 k2=0 create");
+
+// Restar la imatge blava de la nova imatge
+imageCalculator("Subtract create", "A (1).tif (blue)","Result");
+
+// Seleccionar la finestra amb el resultat de la resta
+selectWindow("Result of A (1).tif (blue)");
+
+// Threshold automàtic
+setAutoThreshold("Default dark");
+
+// Aplicar el threshold
+setThreshold(0, 50);
+
+// Analitzar partícules
+run("Analyze Particles...", "size=70-Infinity show=Overlay display exclude summarize in_situ");
+
+// Guardar els resultats com a fitxer d'Excel
+saveAs("Results", "/Users/juliasanabriafranquesa/Desktop/UOC/Q4/Q4TFM/Resultats Julia/P3GPT3/Summary A (1).xls");
+
+// Guardar les regions d'interès a la gestió de regions d'interès (ROI Manager)
+run("To ROI Manager");
+
+// Mostrar la imatge original amb les regions d'interès
+open("/Users/juliasanabriafranquesa/Desktop/UOC/Q4/Q4TFM/ImatgesOriginals_Proves/A (1).tif");
+roiManager("Show All without labels");
+roiManager("Set Color", "red");
+roiManager("Set Line Width", 3);
+
+// Aplanar la imatge amb les regions d'interès superposades
+run("Flatten");
+
+// Guardar la imatge amb les regions d'interès superposades
+saveAs("Tiff", "/Users/juliasanabriafranquesa/Desktop/UOC/Q4/Q4TFM/Resultats Julia/P3GPT3/A (1)-1.tif");
+
+// Tancar finestres
+selectWindow("A (1).tif");
+close();
+selectWindow("Result of A (1).tif (blue)");
+close();
+selectWindow("Result");
+close();
+selectWindow("A (1).tif (blue)");
+close();
+selectWindow("A (1).tif (green)");
+close();
+selectWindow("A (1).tif (red)");
+close();
+selectWindow("A (1)-1.tif");
+close();
